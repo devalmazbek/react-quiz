@@ -1,4 +1,5 @@
 import { useReducer, useEffect } from "react";
+
 import Header from "./components/header";
 import Main from "./components/main";
 import Loader from "./components/loading";
@@ -7,6 +8,8 @@ import SmartScreen from "./components/smartscreen";
 import Question from "./components/question";
 import NextButton from "./components/next-button";
 import Progress from "./components/progress";
+import Finish from "./components/finish";
+import Timer from "./components/timer";
 import "./App.css";
 
 const initialState = {
@@ -15,7 +18,11 @@ const initialState = {
   index: 0,
   answer: null,
   points: 0,
+  highscore: 0,
+  secondRemaining: null,
 };
+
+const SECOND_PER_QUESTION = 20;
 
 function reducer(state, action) {
   switch (action.type) {
@@ -34,6 +41,7 @@ function reducer(state, action) {
       return {
         ...state,
         status: "active",
+        secondRemaining: state.question.length * SECOND_PER_QUESTION,
       };
     }
     case "newAnswer": {
@@ -54,6 +62,29 @@ function reducer(state, action) {
         answer: null,
       };
     }
+    case "finish": {
+      return {
+        ...state,
+        status: "finish",
+        highscore:
+          state.points > state.highscore ? state.points : state.highscore,
+      };
+    }
+
+    case "restart": {
+      return {
+        ...initialState,
+        question: state.question,
+        status: "ready",
+      };
+    }
+
+    case "timer":
+      return {
+        ...state,
+        secondRemaining: state.secondRemaining - 1,
+        status: state.secondRemaining === 0 ? "finish" : state.status,
+      };
 
     default:
       throw new Error("Action unkonown");
@@ -61,10 +92,10 @@ function reducer(state, action) {
 }
 
 export default function App() {
-  const [{ status, question, index, answer, points }, dispatch] = useReducer(
-    reducer,
-    initialState
-  );
+  const [
+    { status, question, index, answer, points, highscore, secondRemaining },
+    dispatch,
+  ] = useReducer(reducer, initialState);
 
   const maxPossiblePoints = question.reduce(
     (prev, current) => prev + current.points,
@@ -100,8 +131,23 @@ export default function App() {
               dispatch={dispatch}
               answer={answer}
             />
-            <NextButton dispatch={dispatch} answer={answer} />
+            <Timer secondRemaining={secondRemaining} dispatch={dispatch} />
+            <NextButton
+              dispatch={dispatch}
+              answer={answer}
+              index={index}
+              question={question}
+            />
           </>
+        )}
+
+        {status === "finish" && (
+          <Finish
+            dispatch={dispatch}
+            points={points}
+            maxPossiblePoints={maxPossiblePoints}
+            highscore={highscore}
+          />
         )}
       </Main>
     </div>

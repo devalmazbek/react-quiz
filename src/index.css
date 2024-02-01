@@ -83,6 +83,11 @@ h4 {
   margin-bottom: 2.4rem;
 }
 
+.main {
+  max-width: 500px;
+  min-width: 500px;
+}
+
 .start {
   display: flex;
   flex-direction: column;
