@@ -1,9 +1,8 @@
-export default function Finish({
-  points,
-  maxPossiblePoints,
-  highscore,
-  dispatch,
-}) {
+import { useQuiz } from "../../context/QuizContext";
+
+export default function Finish() {
+  const { points, maxPossiblePoints, highscore, dispatch } = useQuiz();
+
   const handleRestart = function () {
     dispatch({ type: "restart" });
   };

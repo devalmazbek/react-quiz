@@ -1,4 +1,8 @@
-export default function NextButton({ dispatch, answer, index, question }) {
+import { useQuiz } from "../../context/QuizContext";
+
+export default function NextButton() {
+  const { dispatch, answer, index, question } = useQuiz();
+
   const handleNextQuestion = function () {
     dispatch({ type: "next" });
   };

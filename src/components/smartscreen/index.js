@@ -1,4 +1,8 @@
-export default function SmartScreen({ question, dispatch }) {
+import { useQuiz } from "../../context/QuizContext";
+
+export default function SmartScreen() {
+  const { dispatch, question } = useQuiz();
+
   const onStartQuestion = function () {
     dispatch({ type: "start" });
   };
